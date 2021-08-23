@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Shifter</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Shifter</string>
+    <string name="nav_header_subtitle">Будь в курсе графика!</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Настройки</string>
+
+    <string name="menu_home">Главная</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_first_start">Настройки</string>
+</resources>

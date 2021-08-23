@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="shift_groups">
+        <item>1 группа</item>
+        <item>2 группа</item>
+        <item>3 группа</item>
+        <item>4 группа</item>
+    </string-array>
+</resources>
