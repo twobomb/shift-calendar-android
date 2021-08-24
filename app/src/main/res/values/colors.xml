@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="group_0">#F00</color>
-    <color name="group_1">#00F</color>
-    <color name="group_2">#0F0</color>
-    <color name="group_3">#FF0</color>
+    <color name="group_0">#00C4FF</color>
+    <color name="group_1">#DA0101</color>
+    <color name="group_2">#3FE93F</color>
+    <color name="group_3">#D3D327</color>
 </resources>
