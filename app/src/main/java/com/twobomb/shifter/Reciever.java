@@ -1,5 +1,7 @@
 package com.twobomb.shifter;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -28,7 +30,7 @@ public class Reciever extends BroadcastReceiver {
     @SuppressLint("NotificationTrampoline")
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        Log.d("Shifter","Called intent with action: "+intent.getAction());
         Intent openAppIntent = new Intent(context, Reciever.class);
         openAppIntent.setAction("OpenApp");
         PendingIntent openAppPendingIntent = PendingIntent.getBroadcast(context, 3, openAppIntent,0);
@@ -39,7 +41,7 @@ public class Reciever extends BroadcastReceiver {
         switch (intent.getAction()){
             case "OpenApp":
                 Intent start = context.getPackageManager().getLaunchIntentForPackage("com.twobomb.shifter");
-                start.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                start.addFlags(FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(start);
                 break;
             case MainActivity.ACTION_FRIDAY_REMIND:
@@ -101,6 +103,7 @@ public class Reciever extends BroadcastReceiver {
 
                     String note = sp.getString(HomeFragment.getKeyDateData(gc.getTime()), "");
                     Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+                    i.addFlags(FLAG_ACTIVITY_NEW_TASK);
                     if(note.length() == 0)
                         note = String.format("Дежурство %d группы",myGroup);
                     i.putExtra(AlarmClock.EXTRA_MESSAGE, note);
