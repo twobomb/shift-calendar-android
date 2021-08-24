@@ -1,42 +1,42 @@
 package com.twobomb.shifter.ui.home;
 
-import android.annotation.SuppressLint;
-import android.app.Application;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 import com.twobomb.shifter.R;
+import com.twobomb.shifter.Reciever;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.TimeZone;
-
-import hirondelle.date4j.DateTime;
 
 public class HomeFragment extends Fragment {
 
@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment {
     Switch sw_show_all;
     CaldroidFragment caldroidFragment;
     SharedPreferences sp;
+    ConstraintLayout layout_down;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -54,6 +55,7 @@ public class HomeFragment extends Fragment {
         sp = getActivity().getApplicationContext().getSharedPreferences("APP_SETTINGS", Context.MODE_PRIVATE);
 
         sw_show_all = root.findViewById(R.id.sw_show_all);
+        layout_down = root.findViewById(R.id.layout_down);
         TextView tv_shift_now = root.findViewById(R.id.tv_shift_now);
         tv_shift_now.setText(String.format("Сегодня дежурит %d группа",getGroupIndexByDate(new Date())+1));
 
@@ -65,6 +67,26 @@ public class HomeFragment extends Fragment {
         sw_show_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+
+/*
+
+                AlarmManager manager = (AlarmManager)getContext().getSystemService(
+                        Context.ALARM_SERVICE);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.add(Calendar.SECOND, 2);
+                long time = calendar.getTimeInMillis();
+
+                Intent intent = new Intent(getContext(), Reciever.class);
+                intent.putExtra("test",123);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(),333,intent,PendingIntent.FLAG_ONE_SHOT);
+
+                manager.setExact(AlarmManager.RTC_WAKEUP, time,pendingIntent);
+                System.out.println("ADDDDDDDDDDDDDD");
+*/
+
+
                 SharedPreferences.Editor edit = sp.edit();
                 edit.putBoolean("IS_SHOW_ALL",b);
                 edit.apply();
@@ -74,8 +96,61 @@ public class HomeFragment extends Fragment {
         });
         caldroidFragment.setCaldroidListener(new CaldroidListener() {
             @Override
-            public void onSelectDate(Date date, View view) {
-                Toast.makeText(getContext(),date.toString(),500).show();
+            public void onSelectDate(final Date date, View view) {
+                if(sp.getInt("group_index",0) != getGroupIndexByDate(date))
+                    return;
+                final String keyName = "data_" +(new SimpleDateFormat("dd_MM_yyyy")).format(date);
+                String text = sp.getString(keyName,"");
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                View v = getLayoutInflater().inflate(R.layout.fragment_dialog_note,null);
+
+                Button btn = v.findViewById(R.id.btn_save_note);
+                final EditText textField = v.findViewById(R.id.tb_note);
+                final ImageButton btnAddAlarm = v.findViewById(R.id.ibtn_add_alarm);
+                textField.setText(text);
+
+                builder.setView(v);
+                final AlertDialog dlg = builder.create();
+
+
+                btnAddAlarm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+                        String name = textField.getText().toString();
+                        if(name.length() == 0)
+                            name = String.format("Дежурство %d группы",(getGroupIndexByDate(date)+1));
+                        i.putExtra(AlarmClock.EXTRA_MESSAGE, name);
+                        ArrayList<Integer> days = new ArrayList<Integer>();
+                        GregorianCalendar gc = new GregorianCalendar();
+                        gc.setTime(date);
+                        days.add(gc.get(Calendar.DAY_OF_WEEK));
+                        i.putExtra(AlarmClock.EXTRA_DAYS,days);
+                        i.putExtra(AlarmClock.EXTRA_HOUR, sp.getInt("alarm_hour",7));
+                        i.putExtra(AlarmClock.EXTRA_MINUTES, sp.getInt("alarm_minute",45));
+                        i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+                        startActivity(i);
+
+                        Toast.makeText(getContext(),String.format("Будильник был добавлен на %d:%d на %s ",sp.getInt("alarm_hour",7),sp.getInt("alarm_minute",45),new SimpleDateFormat("EEEE").format(gc.getTime())),1000).show();
+                        dlg.hide();
+                    }
+                });
+
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        SharedPreferences.Editor edit = sp.edit();
+                        edit.putString(keyName,textField.getText().toString());
+                        edit.apply();
+                        dlg.hide();
+                        Toast.makeText(getContext(),"Сохранено",500).show();
+                    }
+                });
+
+                dlg.setTitle(new SimpleDateFormat("dd MMMM yyyy").format(date));
+                dlg.show();
             }
 
             @Override
@@ -110,8 +185,13 @@ public class HomeFragment extends Fragment {
         return (int) (diffDays%4) ;
     }
     public void updateColors(){
+
         int myGroup =        sp.getInt("group_index",0);
         boolean sw_show_all =        sp.getBoolean("IS_SHOW_ALL",false);
+        if(sw_show_all)
+            layout_down.setVisibility(View.VISIBLE);
+        else
+            layout_down.setVisibility(View.INVISIBLE);
         ColorDrawable[] colors=  new ColorDrawable[]{
                 new ColorDrawable(getResources().getColor(R.color.group_0, getActivity().getTheme())),
                 new ColorDrawable(getResources().getColor(R.color.group_1, getActivity().getTheme())),

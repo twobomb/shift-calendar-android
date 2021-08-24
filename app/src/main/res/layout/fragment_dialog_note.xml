@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dlg_note"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    tools:context=".DialogNote">
+
+    <EditText
+        android:id="@+id/tb_note"
+        android:layout_width="320dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="48dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_save_note"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="161dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="12dp"
+        android:text="Сохранить"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tb_note" />
+
+    <ImageButton
+        android:id="@+id/ibtn_add_alarm"
+        style="@android:style/Widget.Holo.Light.ImageButton"
+        android:layout_width="60dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="16dp"
+        android:src="@android:drawable/ic_lock_idle_alarm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_save_note" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
