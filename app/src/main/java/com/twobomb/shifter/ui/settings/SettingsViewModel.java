@@ -9,6 +9,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.twobomb.shifter.MainActivity;
+
 public class SettingsViewModel extends AndroidViewModel {
 
     private MutableLiveData<Integer> currentGroup;//группв
@@ -29,8 +31,10 @@ public class SettingsViewModel extends AndroidViewModel {
     private MutableLiveData<Integer> notif_minute;//минуты
 
     private SharedPreferences sp;
+    Context context;
     public SettingsViewModel(final Application application) {
         super(application);
+        this.context = application.getApplicationContext();
         currentGroup = new MutableLiveData<>();
         is_friday_remind = new MutableLiveData<>();
         friday_hour = new MutableLiveData<>();
@@ -84,8 +88,8 @@ public class SettingsViewModel extends AndroidViewModel {
         editor.putBoolean("is_show_notification_my_group",is_show_notification_my_group.getValue());
         editor.putInt("notif_hour",notif_hour.getValue());
         editor.putInt("notif_minute",notif_minute.getValue());
-
         editor.apply();
+        MainActivity.UpdateTimers(context);
     }
 
 
