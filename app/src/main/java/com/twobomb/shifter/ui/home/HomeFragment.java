@@ -169,13 +169,18 @@ public class HomeFragment extends Fragment {
         begin.setTime(date);
 
         Long  diffDays = Long.valueOf(0);
-        if(dateInit.getTimeInMillis() > begin.getTimeInMillis())
+        int res;
+        if(dateInit.getTimeInMillis() > begin.getTimeInMillis()) {
             diffDays = dateInit.getTimeInMillis() - begin.getTimeInMillis();
-        else
+            diffDays = Double.valueOf(Math.floor(diffDays.doubleValue() / (1000 * 60 * 60 * 24))).longValue();
+            res = (int) ((4 - (diffDays%4))%4);
+        }else {
             diffDays = begin.getTimeInMillis() - dateInit.getTimeInMillis();
+            diffDays = Double.valueOf(Math.floor(diffDays.doubleValue() / (1000 * 60 * 60 * 24))).longValue();
+            res = (int) (diffDays%4);
+        }
 
-        diffDays = Double.valueOf(Math.floor(diffDays.doubleValue() / (1000 * 60 * 60 * 24))).longValue();
-        return (int) (diffDays%4) ;
+        return res ;
     }
     public void updateColors(){
 
@@ -207,24 +212,14 @@ public class HomeFragment extends Fragment {
         caldroidFragment.clearBackgroundDrawableForDates(clearDates);
 
 
-        int groupCur = getGroupIndexByDate(begin.getTime()) ;
-        while (begin.get(Calendar.MONTH)+1 == caldroidFragment.getMonth()){
-            if(!sw_show_all && groupCur == myGroup){
-                caldroidFragment.setBackgroundDrawableForDate(colors[groupCur], begin.getTime());
-                begin.add(Calendar.DATE,1);
-                groupCur = (groupCur+1) %4;
-            }
-            else if(!sw_show_all) {
-                groupCur = (groupCur+1) %4;
-                begin.add(Calendar.DATE,1);
-                continue;
-            }
-            else{
-                caldroidFragment.setBackgroundDrawableForDate(colors[groupCur],begin.getTime());
-                groupCur = (groupCur+1) %4;
-                begin.add(Calendar.DATE,1);
-            }
 
+        while (begin.get(Calendar.MONTH)+1 == caldroidFragment.getMonth()){
+            int groupCur = getGroupIndexByDate(begin.getTime()) ;
+            if(!sw_show_all && groupCur == myGroup)
+                caldroidFragment.setBackgroundDrawableForDate(colors[groupCur], begin.getTime());
+            else if(sw_show_all)
+                caldroidFragment.setBackgroundDrawableForDate(colors[groupCur],begin.getTime());
+            begin.add(Calendar.DATE,1);
         }
     }
 }

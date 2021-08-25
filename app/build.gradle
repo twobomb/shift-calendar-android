@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+        storeFile file('C:\\Users\\twobomb\\twobomb_key_store_path.jks')
+            storePassword 'driver3'
+            keyAlias 'key0'
+            keyPassword 'driver3'
+        }
+    }
     compileSdkVersion 31
     buildToolsVersion "31.0.0"
     defaultConfig {
@@ -15,6 +23,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }

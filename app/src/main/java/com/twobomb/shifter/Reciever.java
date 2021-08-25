@@ -1,5 +1,6 @@
 package com.twobomb.shifter;
 
+import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 import android.annotation.SuppressLint;
@@ -39,6 +40,9 @@ public class Reciever extends BroadcastReceiver {
 
         int myGroup = sp.getInt("group_index",0);
         switch (intent.getAction()){
+            case Intent.ACTION_BOOT_COMPLETED://При включении телефона
+                MainActivity.UpdateTimers(context.getApplicationContext());
+                return;
             case "OpenApp":
                 Intent start = context.getPackageManager().getLaunchIntentForPackage("com.twobomb.shifter");
                 start.addFlags(FLAG_ACTIVITY_NEW_TASK);
